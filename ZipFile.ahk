@@ -1,3 +1,13 @@
+/* ZipFile
+ *     Wrapper for Windows shell ZIP function
+ * AHK Version: Requires v1.1+ OR v2.0-a049+
+ * License: WTFPL (http://www.wtfpl.net/)
+ * Usage:
+ *     See each method's inline documentation for usage
+ * Remarks:
+ *     Caller can insantiate the class vie the 'new' operator OR call the
+ *     ZipFile() function(function definition is below the class definition)
+ */
 class ZipFile
 {
 	/* Function: __New
@@ -9,7 +19,9 @@ class ZipFile
 	 *                    zip archive is created.
 	 */
 	__New(file) {
-		ObjInsert(this, "_", {}) ;// dummy object, bypass __Set
+		static set := Func( A_AhkVersion < "2" ? "ObjInsert" : "ObjRawSet" )
+		
+		%set%(this, "_", {}) ;// dummy object, bypass __Set
 		fso := ComObjCreate("Scripting.FileSystemObject")
 		this._.__path := file := fso.GetAbsolutePathName(file)
 		;// create empty zip file if it doesn't exist
@@ -121,6 +133,8 @@ class ZipFile
 	 *                    be included. Defaults to all types(*.*).
 	 */
 	items(filter:="*.*") {
+		static push := Func( A_AhkVersion < "2" ? "ObjInsert" : "ObjPush" )
+		
 		fso := ComObjCreate("Scripting.FileSystemObject")
 		, psh := ComObjCreate("Shell.Application")
 		, list := []
@@ -132,7 +146,7 @@ class ZipFile
 				"base": {"__Class": "ZipFile.Member", "__Get": this.base.__Get},
 				"_": [&this, item.Path]
 			)}
-			, list.Insert(member)
+			, %push%(list, member)
 		return list
 	}
 	/* Function: item_info
@@ -190,12 +204,8 @@ class ZipFile
 
 	__Set(k, v, p*) {
 		;// Bypass 'base' and '__Class'
-		if (k = "base" || k = "__Class")
-			goto __zf_set
-		;// Make any property read-only
-		return false
-		
-		__zf_set:
+		if (k != "base" && k != "__Class")
+			return false ;// Make any property read-only
 	}
 
 	_NewEnum() {
@@ -207,4 +217,8 @@ class ZipFile
 			k := v, v := ""
 		return r
 	}
+}
+
+ZipFile(file) {
+	return new ZipFile(file)
 }
