@@ -1,7 +1,7 @@
 /* Class: ZipFile
  *     Wrapper for Windows shell ZIP function
  * Version:
- *     1.2.00.01 [updated 03/20/2015]
+ *     1.2.00.02 [updated 03/20/2015]
  * License:
  *     WTFPL [http://www.wtfpl.net/]
  * Requirements:
@@ -10,8 +10,8 @@
  *     Use '#Include ZipFile.ahk' or copy into a function library folder and
  *     then use '#Include <ZipFile>'
  * Links:
- *     GitHub     - http://goo.gl/Ur0wg5
- *     Forum tpic - http://goo.gl/rx6cNm
+ *     GitHub      - http://goo.gl/Ur0wg5
+ *     Forum topic - http://goo.gl/rx6cNm
  */
 class ZipFile
 {
@@ -52,10 +52,10 @@ class ZipFile
 	 *                              zipping.
 	 */
 
-	 /* Method: UnPack
+	 /* Method: Unpack
 	 *     Extract the item(s) into the specified directory
 	 * Syntax:
-	 *     oZip.UnPack( [ FilePattern := "*.*", dest := "" ] )
+	 *     oZip.Unpack( [ FilePattern := "*.*", dest := "" ] )
 	 * Parameter(s):
 	 *     FilePattern  [in, opt] - file pattern specifying the files to unpack.
 	 *                              Path is relative to A_WorkingDir
@@ -64,7 +64,7 @@ class ZipFile
 	 */
 	__Call(name, args*)
 	{
-		if (name = "Pack") || (name = "UnPack")
+		if (name = "Pack") || (name = "Unpack")
 			return this._PackOrUnpack(name, args*)
 	}
 
@@ -92,7 +92,7 @@ class ZipFile
 		
 		; Destination is not empty, this causes a problem when checking if the
 		; MoveHere/CopyHere routine has completed, so we create a temporary dump
-		; location, Pack() or UnPack() into it, then move the item(s) back to the
+		; location, Pack() or Unpack() into it, then move the item(s) back to the
 		; actual destination.
 		if dest.Items().Count
 		{
@@ -104,7 +104,7 @@ class ZipFile
 		; SHCONTF_FOLDERS|SHCONTF_NONFOLDERS|SHCONTF_INCLUDEHIDDEN - http://goo.gl/A2nfTt
 		items.Filter(0x00020|0x00040|0x00080, fspec) ; .Filter(): http://goo.gl/HsUW5W
 		count := items.Count
-		; Pack OR UnPack
+		; Pack OR Unpack
 		dest[IsPack && arg ? "MoveHere" : "CopyHere"](items, 4|16)
 		while (dest.Items().Count != count)
 			Sleep 10
