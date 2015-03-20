@@ -1,7 +1,7 @@
 /* Class: ZipFile
  *     Wrapper for Windows shell ZIP function
  * Version:
- *     1.2.00.00 [updated 03/20/2015]
+ *     1.2.00.01 [updated 03/20/2015]
  * License:
  *     WTFPL [http://www.wtfpl.net/]
  * Requirements:
@@ -131,7 +131,7 @@ class ZipFile
 			if (ObjGetCapacity([NameOrIndex], 1) != "") ; string (name)
 				return this[].ParseName(NameOrIndex)
 			items := this[].Items()
-			if (NameOrIndex > 0) || (NameOrIndex <= items.Count)
+			if (NameOrIndex > 0) && (NameOrIndex <= items.Count)
 				return items.Item(NameOrIndex - 1) ; zero-based
 		}
 	}
@@ -175,7 +175,7 @@ class ZipFile
 			fso := ComObjCreate("Scripting.FileSystemObject")
 			this.Path := A_Temp . "\ZIPFILE_" . fso.GetTempName()
 			this.Folder := fso.CreateFolder(this.Path)
-			this.RestoreTo := IsObject(RestoreTo) ? RestoreTo : fso.GetAbsolutePathName(RestoreTo)
+			this.RestoreTo := fso.GetAbsolutePathName(RestoreTo)
 			this.UseShell := shell
 		}
 		/* Deconstructor: __Delete
